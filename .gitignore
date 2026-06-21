@@ -3,3 +3,9 @@ Thumbs.db
 desktop.ini
 
 .vercel
+.next/
+node_modules/
+.env.local
+.env*.local
+
+/public/uploads/

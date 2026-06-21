@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model News {
+  id        Int      @id @default(autoincrement())
+  title     String
+  slug      String   @unique
+  excerpt   String
+  content   String
+  imageUrl  String?
+  published Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model ProjectUpdate {
+  id        Int      @id @default(autoincrement())
+  version   String
+  title     String
+  content   String
+  date      DateTime
+  createdAt DateTime @default(now())
+}
+
+model ContactMessage {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String
+  subject   String
+  message   String
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+}
+
+model PageView {
+  id        Int      @id @default(autoincrement())
+  page      String
+  sessionId String
+  ip        String?
+  country   String?
+  city      String?
+  referer   String?
+  duration  Int?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([page, createdAt])
+}
+
+model GeoCache {
+  ip        String   @id
+  country   String?
+  city      String?
+  updatedAt DateTime @default(now())
+}
+
+model Banner {
+  id        Int       @id @default(autoincrement())
+  text      String
+  active    Boolean   @default(false)
+  expiresAt DateTime?
+  createdAt DateTime  @default(now())
+}
