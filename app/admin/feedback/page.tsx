@@ -36,6 +36,12 @@ export default function FeedbackPage() {
     await load()
   }
 
+  async function del(id: number) {
+    if (!confirm('Удалить заявку безвозвратно?')) return
+    await fetch(`/api/feedback/${id}`, { method: 'DELETE' })
+    await load()
+  }
+
   return (
     <div>
       <h1 className={styles.pageTitle}>Заявки из контактной формы</h1>
@@ -72,16 +78,24 @@ export default function FeedbackPage() {
                         {statusLabel[m.status] ?? m.status}
                       </span>
                     </td>
-                    <td onClick={e => e.stopPropagation()}>
-                      <select
-                        value={m.status}
-                        onChange={e => setStatus(m.id, e.target.value)}
-                        style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', padding: '4px 8px', fontSize: '12px' }}
-                      >
-                        {Object.entries(statusLabel).map(([k, v]) => (
-                          <option key={k} value={k}>{v}</option>
-                        ))}
-                      </select>
+                    <td onClick={e => e.stopPropagation()} style={{ whiteSpace: 'nowrap' }}>
+                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <select
+                          value={m.status}
+                          onChange={e => setStatus(m.id, e.target.value)}
+                          style={{ background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', padding: '4px 8px', fontSize: '12px' }}
+                        >
+                          {Object.entries(statusLabel).map(([k, v]) => (
+                            <option key={k} value={k}>{v}</option>
+                          ))}
+                        </select>
+                        <button
+                          onClick={() => del(m.id)}
+                          style={{ padding: '4px 8px', background: 'none', border: '1px solid var(--danger)', borderRadius: 'var(--radius-sm)', color: 'var(--danger)', cursor: 'pointer', fontSize: '12px' }}
+                        >
+                          Удал.
+                        </button>
+                      </div>
                     </td>
                   </tr>
                   {expanded === m.id && (
