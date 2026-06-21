@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styles from '../admin.module.css'
 
 interface NewsItem {
@@ -22,6 +22,9 @@ export default function AdminNewsPage() {
   const [showForm, setShowForm] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [uploading, setUploading] = useState(false)
+  const [uploadError, setUploadError] = useState('')
+  const fileRef = useRef<HTMLInputElement>(null)
 
   async function load() {
     const r = await fetch('/api/news?all=1')
@@ -35,6 +38,26 @@ export default function AdminNewsPage() {
 
   function handleTitleChange(v: string) {
     setForm(f => ({ ...f, title: v, slug: f.slug || slugify(v) }))
+  }
+
+  async function handleImageUpload(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploading(true)
+    setUploadError('')
+    try {
+      const fd = new FormData()
+      fd.append('file', file)
+      const r = await fetch('/api/upload', { method: 'POST', body: fd })
+      const data = await r.json()
+      if (!r.ok) throw new Error(data.error || 'Ошибка загрузки')
+      setForm(f => ({ ...f, imageUrl: data.url }))
+    } catch (e: unknown) {
+      setUploadError(e instanceof Error ? e.message : 'Ошибка загрузки')
+    } finally {
+      setUploading(false)
+      if (fileRef.current) fileRef.current.value = ''
+    }
   }
 
   async function save() {
@@ -82,10 +105,13 @@ export default function AdminNewsPage() {
     setEditId(item.id)
     setForm({ title: full.title, slug: full.slug, excerpt: full.excerpt, content: '', imageUrl: full.imageUrl || '', published: full.published })
     setFullContent(full.content || '')
-    setShowForm(true); setError('')
+    setShowForm(true); setError(''); setUploadError('')
   }
 
-  function cancel() { setForm(emptyForm); setFullContent(''); setEditId(null); setShowForm(false); setError('') }
+  function cancel() {
+    setForm(emptyForm); setFullContent(''); setEditId(null)
+    setShowForm(false); setError(''); setUploadError('')
+  }
 
   const inputStyle = { width: '100%', background: 'var(--surface-2)', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', color: 'var(--text-primary)', padding: '10px 12px', fontSize: '14px', boxSizing: 'border-box' as const }
 
@@ -125,18 +151,71 @@ export default function AdminNewsPage() {
               <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Содержимое * (HTML)</label>
               <textarea value={fullContent} onChange={e => setFullContent(e.target.value)} rows={10} style={{ ...inputStyle, resize: 'vertical', fontFamily: 'monospace', fontSize: '13px' }} placeholder="<p>Текст новости...</p>" />
             </div>
+
+            {/* Image upload */}
             <div>
-              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>URL изображения</label>
-              <input value={form.imageUrl} onChange={e => setForm(f => ({ ...f, imageUrl: e.target.value }))} style={inputStyle} placeholder="https://..." />
+              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Изображение
+              </label>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp,image/gif"
+                onChange={handleImageUpload}
+                style={{ display: 'none' }}
+              />
+              <div style={{ display: 'flex', gap: '8px', alignItems: 'center', flexWrap: 'wrap' }}>
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  disabled={uploading}
+                  style={{
+                    padding: '8px 14px',
+                    background: 'var(--surface-2)',
+                    border: '1px solid var(--border)',
+                    borderRadius: 'var(--radius-sm)',
+                    color: uploading ? 'var(--text-secondary)' : 'var(--text-primary)',
+                    cursor: uploading ? 'default' : 'pointer',
+                    fontSize: '13px',
+                    display: 'flex', alignItems: 'center', gap: '6px',
+                  }}
+                >
+                  {uploading ? 'Загружаю...' : '↑ Загрузить фото'}
+                </button>
+                {form.imageUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setForm(f => ({ ...f, imageUrl: '' }))}
+                    style={{ padding: '8px 12px', background: 'none', border: '1px solid var(--danger)', borderRadius: 'var(--radius-sm)', color: 'var(--danger)', cursor: 'pointer', fontSize: '13px' }}
+                  >
+                    Удалить фото
+                  </button>
+                )}
+                {form.imageUrl && (
+                  <span style={{ fontSize: '11px', color: 'var(--text-secondary)', fontFamily: 'monospace', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap', maxWidth: '300px' }}>
+                    {form.imageUrl}
+                  </span>
+                )}
+              </div>
+              {uploadError && (
+                <p style={{ color: 'var(--danger)', fontSize: '13px', margin: '6px 0 0' }}>{uploadError}</p>
+              )}
+              {form.imageUrl && (
+                <div style={{ marginTop: '10px', border: '1px solid var(--border)', overflow: 'hidden', display: 'inline-block' }}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={form.imageUrl} alt="Preview" style={{ maxHeight: '160px', maxWidth: '100%', display: 'block', objectFit: 'cover' }} />
+                </div>
+              )}
             </div>
+
             <label style={{ display: 'flex', alignItems: 'center', gap: '8px', cursor: 'pointer', fontSize: '14px' }}>
               <input type="checkbox" checked={form.published} onChange={e => setForm(f => ({ ...f, published: e.target.checked }))} />
               Опубликовать сразу
             </label>
             {error && <p style={{ color: 'var(--danger)', fontSize: '14px', margin: 0 }}>{error}</p>}
             <div style={{ display: 'flex', gap: '12px' }}>
-              <button onClick={save} disabled={saving}
-                style={{ padding: '8px 20px', background: 'var(--accent)', border: 'none', borderRadius: 'var(--radius-sm)', color: '#000', fontWeight: 600, cursor: 'pointer', fontSize: '14px', opacity: saving ? 0.7 : 1 }}>
+              <button onClick={save} disabled={saving || uploading}
+                style={{ padding: '8px 20px', background: 'var(--accent)', border: 'none', borderRadius: 'var(--radius-sm)', color: '#000', fontWeight: 600, cursor: 'pointer', fontSize: '14px', opacity: (saving || uploading) ? 0.7 : 1 }}>
                 {saving ? 'Сохраняю...' : 'Сохранить'}
               </button>
               <button onClick={cancel}
@@ -157,7 +236,15 @@ export default function AdminNewsPage() {
             <tbody>
               {items.map(item => (
                 <tr key={item.id}>
-                  <td>{item.title}</td>
+                  <td>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {item.imageUrl && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={item.imageUrl} alt="" style={{ width: '32px', height: '32px', objectFit: 'cover', border: '1px solid var(--border)', flexShrink: 0 }} />
+                      )}
+                      {item.title}
+                    </div>
+                  </td>
                   <td style={{ fontFamily: 'monospace', fontSize: '12px', color: 'var(--text-secondary)' }}>{item.slug}</td>
                   <td>
                     <button onClick={() => togglePublish(item)}
