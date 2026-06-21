@@ -18,7 +18,11 @@ export default function AnalyticsPage() {
     setLoading(true)
     fetch(`/api/analytics?days=${days}`)
       .then(r => r.json())
-      .then(d => setStats(d))
+      .then(d => {
+        if (d && typeof d.total === 'number' && Array.isArray(d.byPage) && Array.isArray(d.byDay)) {
+          setStats(d)
+        }
+      })
       .catch(() => {})
       .finally(() => setLoading(false))
   }, [days])

@@ -25,7 +25,10 @@ export default function AdminNewsPage() {
 
   async function load() {
     const r = await fetch('/api/news?all=1')
-    if (r.ok) setItems(await r.json())
+    if (r.ok) {
+      const data = await r.json()
+      if (Array.isArray(data)) setItems(data)
+    }
   }
 
   useEffect(() => { load() }, [])

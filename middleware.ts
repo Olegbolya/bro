@@ -8,12 +8,17 @@ export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname === '/admin/login') return NextResponse.next()
 
   const response = NextResponse.next()
-  const session = await getIronSession<SessionData>(request, response, {
-    cookieName: 'bro_session',
-    password: process.env.SESSION_SECRET as string,
-  })
 
-  if (!session.isAdmin) {
+  try {
+    const session = await getIronSession<SessionData>(request, response, {
+      cookieName: 'bro_session',
+      password: process.env.SESSION_SECRET as string,
+    })
+
+    if (!session.isAdmin) {
+      return NextResponse.redirect(new URL('/admin/login', request.url))
+    }
+  } catch {
     return NextResponse.redirect(new URL('/admin/login', request.url))
   }
 

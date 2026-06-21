@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Fragment } from 'react'
 import styles from '../admin.module.css'
 
 interface Message {
@@ -57,8 +57,8 @@ export default function FeedbackPage() {
             </thead>
             <tbody>
               {messages.map(m => (
-                <>
-                  <tr key={m.id} style={{ cursor: 'pointer' }} onClick={() => setExpanded(expanded === m.id ? null : m.id)}>
+                <Fragment key={m.id}>
+                  <tr style={{ cursor: 'pointer' }} onClick={() => setExpanded(expanded === m.id ? null : m.id)}>
                     <td style={{ color: 'var(--text-secondary)', whiteSpace: 'nowrap', fontSize: '13px' }}>
                       {new Date(m.createdAt).toLocaleDateString('ru-RU')}
                     </td>
@@ -85,13 +85,13 @@ export default function FeedbackPage() {
                     </td>
                   </tr>
                   {expanded === m.id && (
-                    <tr key={`${m.id}-expanded`}>
+                    <tr>
                       <td colSpan={6} style={{ background: 'var(--surface-2)', padding: '16px 20px' }}>
                         <p style={{ fontSize: '14px', lineHeight: 1.7, color: 'var(--text-primary)', whiteSpace: 'pre-line', margin: 0 }}>{m.message}</p>
                       </td>
                     </tr>
                   )}
-                </>
+                </Fragment>
               ))}
             </tbody>
           </table>

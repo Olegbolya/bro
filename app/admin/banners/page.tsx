@@ -17,7 +17,10 @@ export default function BannersPage() {
 
   async function load() {
     const r = await fetch('/api/banners')
-    if (r.ok) setBanners(await r.json())
+    if (r.ok) {
+      const data = await r.json()
+      if (Array.isArray(data)) setBanners(data)
+    }
   }
 
   useEffect(() => { load() }, [])
