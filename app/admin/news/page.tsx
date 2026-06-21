@@ -14,7 +14,7 @@ interface NewsItem {
 const emptyForm = { title: '', slug: '', excerpt: '', content: '', imageUrl: '', published: false }
 
 function slugify(text: string) {
-  return text.toLowerCase().replace(/[^\w\s-]/g, '').trim().replace(/\s+/g, '-').replace(/-+/g, '-').slice(0, 80)
+  return text.toLowerCase().replace(/[^\wа-яёА-ЯЁ\s-]/gi, '').trim().replace(/\s+/g, '-').replace(/-+/g, '-').slice(0, 80)
 }
 
 export default function AdminNewsPage() {
@@ -104,13 +104,18 @@ export default function AdminNewsPage() {
   }
 
   async function startEdit(item: NewsItem) {
-    const r = await fetch(`/api/news/${item.id}`)
-    const full = await r.json()
-    setEditId(item.id)
-    setFormKey(k => k + 1)
-    setForm({ title: full.title, slug: full.slug, excerpt: full.excerpt, content: '', imageUrl: full.imageUrl || '', published: full.published })
-    setFullContent(full.content || '')
-    setShowForm(true); setError(''); setUploadError('')
+    try {
+      const r = await fetch(`/api/news/${item.id}`)
+      if (!r.ok) throw new Error('Ошибка загрузки')
+      const full = await r.json()
+      setEditId(item.id)
+      setFormKey(k => k + 1)
+      setForm({ title: full.title, slug: full.slug, excerpt: full.excerpt, content: '', imageUrl: full.imageUrl || '', published: full.published })
+      setFullContent(full.content || '')
+      setShowForm(true); setError(''); setUploadError('')
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : 'Ошибка загрузки')
+    }
   }
 
   function cancel() {

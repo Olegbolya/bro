@@ -40,7 +40,7 @@ export default async function AdminDashboard() {
           <strong style={{ color: 'var(--text-primary)' }}>Статус системы:</strong> Панель управления активна.
           Используйте боковое меню для управления контентом.
           {stats.visits === 0 && stats.newMessages === 0
-            ? ' База данных ожидает инициализации — выполните SQL из prisma/init.sql в Supabase.'
+            ? ' База данных пуста — выполните npm run db:push && npm run db:seed для инициализации.'
             : ''}
         </p>
       </div>

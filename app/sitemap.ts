@@ -1,7 +1,8 @@
 import type { MetadataRoute } from 'next'
 import { db } from '@/lib/db'
 
-const BASE = 'https://bro-olegs-projects-7c529983.vercel.app'
+const BASE = process.env.NEXT_PUBLIC_BASE_URL
+  || (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : 'https://bro-olegs-projects-7c529983.vercel.app')
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   let newsItems: { slug: string; updatedAt: Date }[] = []

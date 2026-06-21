@@ -47,6 +47,9 @@ export default function EmbedPage() {
     let lastFramesDecoded = 0
     let blackScreenTimer = 0
     let animFrame: number
+    let mounted = true
+    let wsTags: WebSocket | null = null
+    let videoWs: WebSocket | null = null
 
     const canvas = canvasRef.current!
     const ctx = canvas.getContext('2d')!
@@ -107,7 +110,8 @@ export default function EmbedPage() {
       pc.addTransceiver('audio', { direction: 'recvonly' })
 
       const wsUrl = `wss://${CONFIG.user}:${CONFIG.pass}@${CONFIG.domain}/api/ws?src=${currentStream}`
-      const ws = new WebSocket(wsUrl)
+      videoWs = new WebSocket(wsUrl)
+      const ws = videoWs
       ws.onopen = () => {
         pc!.onicecandidate = ev => ev.candidate && ws.send(JSON.stringify({ type: 'webrtc/candidate', value: ev.candidate.candidate }))
         pc!.createOffer()
@@ -119,16 +123,17 @@ export default function EmbedPage() {
         if (msg.type === 'webrtc/answer') await pc!.setRemoteDescription({ type: 'answer', sdp: msg.value })
         else if (msg.type === 'webrtc/candidate') await pc!.addIceCandidate({ candidate: msg.value, sdpMid: '0' })
       }
-      ws.onclose = () => { if (!isSwitching) setTimeout(connectVideo, 3000) }
+      ws.onclose = () => { if (!isSwitching && mounted) setTimeout(connectVideo, 3000) }
     }
 
     function connectTagsWS() {
-      const wsTags = new WebSocket(CONFIG.tagsWsUrl)
+      wsTags = new WebSocket(CONFIG.tagsWsUrl)
       wsTags.onopen = () => { if (wsStatusRef.current) { wsStatusRef.current.innerText = 'ONLINE'; wsStatusRef.current.style.color = '#0f0' } }
       wsTags.onmessage = ev => {
         try { const data = JSON.parse(ev.data); latestTags = data.tags || [] } catch {}
       }
       wsTags.onclose = () => {
+        if (!mounted) return
         if (wsStatusRef.current) { wsStatusRef.current.innerText = 'OFFLINE'; wsStatusRef.current.style.color = 'red' }
         setTimeout(connectTagsWS, 2000)
       }
@@ -177,9 +182,12 @@ export default function EmbedPage() {
     hudLoop()
 
     return () => {
+      mounted = false
       if (pc) pc.close()
       if (statsInterval) clearInterval(statsInterval)
       cancelAnimationFrame(animFrame)
+      if (wsTags) wsTags.close()
+      if (videoWs) videoWs.close()
     }
   }, [])
 

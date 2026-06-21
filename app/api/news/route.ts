@@ -11,7 +11,7 @@ async function requireAdmin() {
 function slugify(text: string): string {
   return text
     .toLowerCase()
-    .replace(/[^\w\s-]/g, '')
+    .replace(/[^\wа-яёА-ЯЁ\s-]/gi, '')
     .trim()
     .replace(/\s+/g, '-')
     .replace(/-+/g, '-')
@@ -54,6 +54,9 @@ export async function POST(req: NextRequest) {
       allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img', 'h1', 'h2', 'h3']),
       allowedAttributes: { ...sanitizeHtml.defaults.allowedAttributes, img: ['src', 'alt'] },
     })
+    if (!cleanContent.replace(/<[^>]*>/g, '').trim()) {
+      return NextResponse.json({ error: 'Содержимое не может быть пустым' }, { status: 400 })
+    }
 
     const item = await db.news.create({
       data: {
