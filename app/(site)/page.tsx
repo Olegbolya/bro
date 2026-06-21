@@ -39,11 +39,12 @@ export default async function HomePage() {
       {/* Hero */}
       <section className={styles.hero}>
         <div className="container">
-          <div className={styles.heroBadge}>⚡ Онлайн-арена</div>
+          <div className={styles.heroBadge}>Онлайн-арена</div>
           <h1 className={styles.heroTitle}>Бои Роботов<br /><span className={styles.heroAccent}>Онлайн</span></h1>
           <p className={styles.heroSub}>Управляйте реальными роботами на арене<br />и станьте чемпионом!</p>
           <a href="https://static.robo-arena.ru/queue.html" className={styles.heroCta}>
             Начать игру
+            <span className={styles.heroCtaArrow}>▶</span>
           </a>
         </div>
       </section>
@@ -135,6 +136,7 @@ export default async function HomePage() {
             <p className={styles.ctaText}>Присоединяйтесь к тысячам игроков и начните свою карьеру бойца прямо сейчас!</p>
             <a href="https://static.robo-arena.ru/queue.html" className={styles.heroCta}>
               Присоединиться
+              <span className={styles.heroCtaArrow}>▶</span>
             </a>
           </div>
         </div>

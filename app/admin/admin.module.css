@@ -3,6 +3,7 @@
   min-height: 100vh;
 }
 
+/* ─── Admin Nav ───────────────────────────────────────── */
 .nav {
   width: 220px;
   flex-shrink: 0;
@@ -10,7 +11,7 @@
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
-  padding: 24px 12px;
+  padding: 0 0 20px;
   position: sticky;
   top: 0;
   height: 100vh;
@@ -21,137 +22,177 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  padding: 0 10px 20px;
+  padding: 20px 14px 16px;
   border-bottom: 1px solid var(--border);
-  margin-bottom: 16px;
+  margin-bottom: 12px;
+  position: relative;
+}
+
+.navLogo::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 2px;
+  height: 100%;
+  background: var(--accent-2);
 }
 
 .navLogo span:first-child {
-  font-size: 22px;
+  font-size: 20px;
   font-weight: 800;
   color: var(--accent);
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .navLogoSub {
-  font-size: 10px;
+  font-size: 9px;
   color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
 }
 
 .navLinks {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 1px;
   flex: 1;
+  padding: 0 8px;
 }
 
 .navLink {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   padding: 9px 10px;
-  border-radius: var(--radius-sm);
+  border-left: 2px solid transparent;
   color: var(--text-secondary);
-  font-size: 14px;
-  transition: all 0.15s;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.12s;
   text-decoration: none;
 }
-.navLink:hover { background: var(--surface-2); color: var(--text-primary); }
-.navLinkActive { background: var(--accent-dim) !important; color: var(--accent) !important; }
+
+.navLink:hover {
+  color: var(--text-primary);
+  border-left-color: var(--border);
+  background: rgba(255,255,255,0.02);
+}
+
+.navLinkActive {
+  border-left-color: var(--accent) !important;
+  color: var(--accent) !important;
+  background: var(--accent-dim) !important;
+}
 
 .navFooter {
   border-top: 1px solid var(--border);
-  padding-top: 16px;
+  padding: 14px 8px 0;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  margin: 0 0 0 0;
 }
 
 .logoutBtn {
   padding: 8px 10px;
   background: none;
   border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 12px;
   text-align: left;
-  transition: all 0.15s;
+  transition: all 0.12s;
+  width: 100%;
 }
 .logoutBtn:hover { border-color: var(--danger); color: var(--danger); }
 
+/* ─── Main Content ────────────────────────────────────── */
 .main {
   flex: 1;
   padding: 40px;
   overflow-x: hidden;
+  background-image: radial-gradient(rgba(0, 194, 255, 0.02) 1px, transparent 1px);
+  background-size: 28px 28px;
 }
 
-/* Общие стили для страниц админки */
 .pageTitle {
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 700;
   margin-bottom: 32px;
+  letter-spacing: -0.3px;
 }
 
+/* ─── Stats ───────────────────────────────────────────── */
 .statsRow {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
 }
 
 .statCard {
   background: var(--surface-1);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-card);
   padding: 20px 24px;
+  position: relative;
+}
+
+.statCard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--accent), transparent);
+  opacity: 0.4;
 }
 
 .statNum {
-  font-size: 32px;
+  font-size: 30px;
   font-weight: 700;
   color: var(--accent);
   font-family: 'JetBrains Mono', monospace;
+  letter-spacing: -1px;
 }
 
 .statLabel {
-  font-size: 12px;
+  font-size: 10px;
   color: var(--text-secondary);
   margin-top: 4px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
 }
 
+/* ─── Table ───────────────────────────────────────────── */
 .table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .table th {
   text-align: left;
-  padding: 10px 16px;
+  padding: 9px 16px;
   border-bottom: 1px solid var(--border);
   color: var(--text-secondary);
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 500;
+  letter-spacing: 0.8px;
+  font-weight: 600;
+  background: var(--surface-2);
 }
 
 .table td {
-  padding: 12px 16px;
+  padding: 11px 16px;
   border-bottom: 1px solid var(--border);
   color: var(--text-primary);
   vertical-align: middle;
 }
 
 .table tr:last-child td { border-bottom: none; }
-.table tr:hover td { background: var(--surface-2); }
+.table tr:hover td { background: rgba(0, 194, 255, 0.02); }
 
 .tableWrap {
   background: var(--surface-1);
   border: 1px solid var(--border);
-  border-radius: var(--radius-card);
   overflow: hidden;
 }

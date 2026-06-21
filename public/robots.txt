@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+
+Sitemap: https://bro-olegs-projects-7c529983.vercel.app/sitemap.xml

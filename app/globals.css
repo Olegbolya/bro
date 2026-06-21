@@ -1,21 +1,25 @@
 :root {
   --bg: #08090d;
-  --surface-1: #111218;
-  --surface-2: #1a1c24;
-  --surface-3: #222532;
+  --surface-1: #0e1017;
+  --surface-2: #161921;
+  --surface-3: #1e2230;
   --accent: #00c2ff;
   --accent-hover: #33cfff;
-  --accent-dim: rgba(0, 194, 255, 0.12);
-  --text-primary: #e0e6f0;
-  --text-secondary: #7a869a;
-  --border: #1e2130;
+  --accent-dim: rgba(0, 194, 255, 0.1);
+  --accent-2: #ff6b2b;
+  --accent-2-dim: rgba(255, 107, 43, 0.1);
+  --text-primary: #d8e4f0;
+  --text-secondary: #6b7a90;
+  --border: #1c2035;
+  --border-accent: rgba(0, 194, 255, 0.2);
   --danger: #ff4d6a;
   --success: #00e5a0;
   --warning: #ffb830;
   --sidebar-width: 240px;
-  --radius-card: 12px;
-  --radius-btn: 8px;
-  --radius-sm: 6px;
+  --radius-card: 0px;
+  --radius-btn: 2px;
+  --radius-sm: 2px;
+  --cut: 10px;
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,12 +29,15 @@ html { scroll-behavior: smooth; }
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
   background-color: var(--bg);
+  background-image:
+    radial-gradient(rgba(0, 194, 255, 0.035) 1px, transparent 1px);
+  background-size: 28px 28px;
   color: var(--text-primary);
   -webkit-font-smoothing: antialiased;
   min-height: 100vh;
 }
 
-a { color: var(--accent); text-decoration: none; transition: color 0.2s; }
+a { color: var(--accent); text-decoration: none; transition: color 0.15s; }
 a:hover { color: var(--accent-hover); }
 
 button { cursor: pointer; font-family: inherit; }
@@ -43,12 +50,11 @@ img, video { max-width: 100%; display: block; }
   padding: 0 24px;
 }
 
-/* Шрифт для цифр/кода */
 .mono {
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
 }
 
-/* Кнопки */
+/* ─── Buttons ──────────────────────────────────────────── */
 .btn {
   display: inline-flex;
   align-items: center;
@@ -57,16 +63,21 @@ img, video { max-width: 100%; display: block; }
   padding: 10px 22px;
   border-radius: var(--radius-btn);
   font-size: 15px;
-  font-weight: 500;
+  font-weight: 600;
   border: none;
-  transition: all 0.2s;
+  transition: all 0.15s;
+  letter-spacing: 0.3px;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 0 100%);
 }
 
 .btn-primary {
   background: var(--accent);
   color: #000;
 }
-.btn-primary:hover { background: var(--accent-hover); transform: translateY(-1px); }
+.btn-primary:hover {
+  background: var(--accent-hover);
+  box-shadow: 0 0 20px rgba(0, 194, 255, 0.4);
+}
 
 .btn-ghost {
   background: transparent;
@@ -76,27 +87,27 @@ img, video { max-width: 100%; display: block; }
 .btn-ghost:hover { border-color: var(--accent); color: var(--accent); }
 
 .btn-danger {
-  background: rgba(255, 77, 106, 0.15);
+  background: rgba(255, 77, 106, 0.12);
   color: var(--danger);
-  border: 1px solid rgba(255, 77, 106, 0.3);
+  border: 1px solid rgba(255, 77, 106, 0.25);
 }
-.btn-danger:hover { background: rgba(255, 77, 106, 0.25); }
+.btn-danger:hover { background: rgba(255, 77, 106, 0.2); }
 
-/* Карточки */
+/* ─── Cards ───────────────────────────────────────────── */
 .card {
   background: var(--surface-1);
   border: 1px solid var(--border);
-  border-radius: var(--radius-card);
   padding: 28px;
+  clip-path: polygon(0 0, calc(100% - var(--cut)) 0, 100% var(--cut), 100% 100%, var(--cut) 100%, 0 calc(100% - var(--cut)));
 }
 
-/* Скроллбар */
-::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--surface-1); }
-::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 3px; }
+/* ─── Scrollbar ───────────────────────────────────────── */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--surface-3); }
 ::-webkit-scrollbar-thumb:hover { background: var(--text-secondary); }
 
-/* Layout с сайдбаром */
+/* ─── Layout ──────────────────────────────────────────── */
 .layout-root {
   display: flex;
   min-height: 100vh;
@@ -113,24 +124,80 @@ img, video { max-width: 100%; display: block; }
   .layout-main { margin-left: 0; padding-top: 60px; }
 }
 
-/* Секции */
+/* ─── Sections ────────────────────────────────────────── */
 section { padding: 80px 0; }
+
 .section-title {
-  font-size: 38px;
+  font-size: 36px;
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: 48px;
   text-align: center;
+  position: relative;
 }
 
-/* Анимации */
+.section-title::after {
+  content: '';
+  display: block;
+  width: 32px;
+  height: 2px;
+  background: var(--accent);
+  margin: 14px auto 0;
+}
+
+/* ─── Animations ──────────────────────────────────────── */
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(20px); }
+  from { opacity: 0; transform: translateY(16px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-.fade-up { animation: fadeUp 0.5s ease forwards; }
+.fade-up { animation: fadeUp 0.4s ease forwards; }
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.2; }
+}
 
 @keyframes glow {
-  0%, 100% { box-shadow: 0 0 8px rgba(0, 194, 255, 0.3); }
-  50%       { box-shadow: 0 0 20px rgba(0, 194, 255, 0.6); }
+  0%, 100% { box-shadow: 0 0 6px rgba(0, 194, 255, 0.3); }
+  50%       { box-shadow: 0 0 18px rgba(0, 194, 255, 0.6); }
+}
+
+@keyframes scanline {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+/* ─── Article content ─────────────────────────────────── */
+.article-body h1,
+.article-body h2,
+.article-body h3 {
+  color: var(--text-primary);
+  font-weight: 700;
+  margin: 2em 0 0.75em;
+  line-height: 1.3;
+}
+.article-body h2 { font-size: 22px; border-left: 3px solid var(--accent); padding-left: 12px; }
+.article-body h3 { font-size: 18px; color: var(--accent); }
+.article-body p { margin-bottom: 1.25em; }
+.article-body a { color: var(--accent); text-decoration: underline; text-underline-offset: 3px; }
+.article-body ul,
+.article-body ol { padding-left: 1.5em; margin-bottom: 1.25em; }
+.article-body li { margin-bottom: 0.4em; }
+.article-body img { border: 1px solid var(--border); margin: 1.5em 0; }
+.article-body strong { color: var(--text-primary); font-weight: 600; }
+.article-body code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.875em;
+  background: var(--surface-2);
+  padding: 2px 6px;
+  border: 1px solid var(--border);
+}
+.article-body blockquote {
+  border-left: 3px solid var(--accent-2);
+  padding-left: 16px;
+  margin: 1.5em 0;
+  color: var(--text-secondary);
+  font-style: italic;
 }
