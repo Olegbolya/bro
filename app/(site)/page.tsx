@@ -1,6 +1,9 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
+import { db } from '@/lib/db'
 import styles from './page.module.css'
+
+export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
   title: 'БРО — Бои Роботов Онлайн',
@@ -15,15 +18,24 @@ const features = [
   { title: 'Турниры и призы',   text: 'Зарабатывайте опыт, повышайте уровень и выигрывайте призы в ежемесячных турнирах.' },
 ]
 
-export default function HomePage() {
+export default async function HomePage() {
+  let visits30 = 0
+  let uniquePlayers = 0
+
+  try {
+    const since = new Date()
+    since.setDate(since.getDate() - 30)
+    since.setHours(0, 0, 0, 0)
+    const [totalViews, sessions] = await Promise.all([
+      db.pageView.count({ where: { createdAt: { gte: since } } }),
+      db.pageView.groupBy({ by: ['sessionId'], where: { createdAt: { gte: since } } }),
+    ])
+    visits30 = totalViews
+    uniquePlayers = sessions.length
+  } catch {}
+
   return (
     <>
-      {/* Баннер (потом будет управляться из БД) */}
-      <div className={styles.banner}>
-        🛠️ Личный кабинет временно ушел на доработку. В демо-игре возможны технические неполадки.{' '}
-        <strong>Мы готовим для вас крупное обновление к 30.06.2026!</strong>
-      </div>
-
       {/* Hero */}
       <section className={styles.hero}>
         <div className="container">
@@ -94,25 +106,24 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Статистика (заглушка — потом реальные данные из БД) */}
+      {/* Статистика */}
       <section id="stats">
         <div className="container">
           <h2 className="section-title">Статистика</h2>
           <div className={styles.statsGrid}>
             <div className={styles.statCard}>
-              <span className={`${styles.statNum} mono`}>—</span>
+              <span className={`${styles.statNum} mono`}>{visits30 > 0 ? visits30.toLocaleString('ru-RU') : '—'}</span>
               <span className={styles.statLabel}>Посещений за 30 дней</span>
             </div>
             <div className={styles.statCard}>
-              <span className={`${styles.statNum} mono`}>—</span>
-              <span className={styles.statLabel}>Уникальных игроков</span>
+              <span className={`${styles.statNum} mono`}>{uniquePlayers > 0 ? uniquePlayers.toLocaleString('ru-RU') : '—'}</span>
+              <span className={styles.statLabel}>Уникальных сессий</span>
             </div>
             <div className={styles.statCard}>
-              <span className={`${styles.statNum} mono`}>—</span>
-              <span className={styles.statLabel}>Среднее время на сайте</span>
+              <span className={`${styles.statNum} mono`}>24/7</span>
+              <span className={styles.statLabel}>Доступность арены</span>
             </div>
           </div>
-          <p className={styles.statsNote}>Данные появятся после подключения базы данных</p>
         </div>
       </section>
 

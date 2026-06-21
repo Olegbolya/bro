@@ -1,6 +1,5 @@
 import type { Metadata } from 'next'
 import './globals.css'
-import Sidebar from '@/components/layout/Sidebar'
 
 export const metadata: Metadata = {
   title: 'Бои Роботов Онлайн (БРО)',
@@ -11,14 +10,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="ru">
-      <body>
-        <div className="layout-root">
-          <Sidebar />
-          <main className="layout-main">
-            {children}
-          </main>
-        </div>
-      </body>
+      <body>{children}</body>
     </html>
   )
 }
