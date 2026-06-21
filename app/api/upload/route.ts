@@ -11,6 +11,20 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
+  // Blob store can authenticate via BLOB_READ_WRITE_TOKEN OR via
+  // VERCEL_OIDC_TOKEN + BLOB_STORE_ID (auto-injected in Vercel deployments).
+  // If neither is available the store wasn't linked yet.
+  const hasCredentials =
+    !!process.env.BLOB_READ_WRITE_TOKEN ||
+    !!(process.env.VERCEL_OIDC_TOKEN && process.env.BLOB_STORE_ID)
+
+  if (!hasCredentials) {
+    return NextResponse.json(
+      { error: 'Хранилище изображений не настроено. Привяжите Vercel Blob в настройках проекта.' },
+      { status: 503 }
+    )
+  }
+
   try {
     const formData = await request.formData()
     const file = formData.get('file') as File | null
