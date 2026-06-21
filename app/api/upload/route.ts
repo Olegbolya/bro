@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { put } from '@vercel/blob'
+import sharp from 'sharp'
 import { getSession } from '@/lib/session'
 
 const ALLOWED = new Set(['image/jpeg', 'image/png', 'image/webp', 'image/gif'])
@@ -11,8 +12,6 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
   }
 
-  // Blob store needs either a static token or a linked store (OIDC is handled
-  // internally by @vercel/blob SDK when BLOB_STORE_ID is present).
   const hasCredentials =
     !!process.env.BLOB_READ_WRITE_TOKEN || !!process.env.BLOB_STORE_ID
 
@@ -35,10 +34,28 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Файл слишком большой (макс. 5 МБ)' }, { status: 400 })
     }
 
-    const ext = file.name.split('.').pop()?.toLowerCase() ?? 'jpg'
-    const key = `news/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const buffer = Buffer.from(await file.arrayBuffer())
 
-    const blob = await put(key, file, { access: 'public', contentType: file.type })
+    // Compress and convert to WebP (skip for GIF to preserve animation)
+    let uploadBuffer: Buffer
+    let contentType: string
+    let ext: string
+
+    if (file.type === 'image/gif') {
+      uploadBuffer = buffer
+      contentType = 'image/gif'
+      ext = 'gif'
+    } else {
+      uploadBuffer = await sharp(buffer)
+        .resize({ width: 1200, withoutEnlargement: true })
+        .webp({ quality: 85 })
+        .toBuffer()
+      contentType = 'image/webp'
+      ext = 'webp'
+    }
+
+    const key = `news/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`
+    const blob = await put(key, uploadBuffer, { access: 'public', contentType })
     return NextResponse.json({ url: blob.url })
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Ошибка загрузки'

@@ -1,7 +1,10 @@
 import type { Metadata } from 'next'
+import dynamicImport from 'next/dynamic'
 import Link from 'next/link'
 import { db } from '@/lib/db'
 import styles from './page.module.css'
+
+const VisitsChart = dynamicImport(() => import('@/components/charts/VisitsChart'), { ssr: false })
 
 export const dynamic = 'force-dynamic'
 
@@ -124,6 +127,10 @@ export default async function HomePage() {
               <span className={`${styles.statNum} mono`}>24/7</span>
               <span className={styles.statLabel}>Доступность арены</span>
             </div>
+          </div>
+          <div className={styles.chartWrap}>
+            <p className={styles.chartLabel}>Посещения за последние 30 дней</p>
+            <VisitsChart />
           </div>
         </div>
       </section>

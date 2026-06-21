@@ -1,7 +1,10 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import dynamic from 'next/dynamic'
 import styles from '../admin.module.css'
+
+const QuillEditor = dynamic(() => import('@/components/news/QuillEditor'), { ssr: false })
 
 interface NewsItem {
   id: number; title: string; slug: string; excerpt: string
@@ -148,8 +151,8 @@ export default function AdminNewsPage() {
               <textarea value={form.excerpt} onChange={e => setForm(f => ({ ...f, excerpt: e.target.value }))} rows={2} style={{ ...inputStyle, resize: 'vertical' }} placeholder="Краткое описание для списка новостей" />
             </div>
             <div>
-              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Содержимое * (HTML)</label>
-              <textarea value={fullContent} onChange={e => setFullContent(e.target.value)} rows={10} style={{ ...inputStyle, resize: 'vertical', fontFamily: 'monospace', fontSize: '13px' }} placeholder="<p>Текст новости...</p>" />
+              <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Содержимое *</label>
+              <QuillEditor key={editId ?? 'new'} initialValue={fullContent} onChange={setFullContent} />
             </div>
 
             {/* Image upload */}

@@ -351,3 +351,17 @@
   transition: opacity 0.15s;
 }
 .footerContact:hover { opacity: 1; }
+
+.chartWrap {
+  margin-top: 32px;
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  padding: 20px 24px 16px;
+}
+.chartLabel {
+  font-size: 11px;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin-bottom: 16px;
+}
