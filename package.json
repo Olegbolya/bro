@@ -26,6 +26,9 @@
     "sanitize-html": "^2.13.1",
     "sharp": "^0.33.5"
   },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20",

@@ -32,7 +32,7 @@ export default function PublicStats() {
   const maxCnt = data.countries.reduce((m, c) => Math.max(m, c.cnt), 1)
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '16px' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '16px', marginTop: '16px' }}>
       {/* Avg time */}
       <div style={{ background: 'var(--surface-1)', border: '1px solid var(--border)', padding: '20px 24px' }}>
         <p style={{ fontSize: '11px', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px' }}>

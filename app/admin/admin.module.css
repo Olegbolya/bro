@@ -196,3 +196,69 @@
   border: 1px solid var(--border);
   overflow: hidden;
 }
+
+/* ─── Mobile / Responsive ─────────────────────────────── */
+@media (max-width: 768px) {
+  .layout { flex-direction: column; }
+
+  .nav {
+    width: 100%;
+    height: auto;
+    position: static;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+    padding: 0;
+    flex-direction: row;
+    align-items: center;
+    overflow-x: auto;
+    flex-wrap: nowrap;
+  }
+
+  .navLogo { display: none; }
+
+  .navLinks {
+    flex-direction: row;
+    gap: 0;
+    flex: 1;
+    padding: 0;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  .navLink {
+    padding: 12px 14px;
+    border-left: none;
+    border-bottom: 2px solid transparent;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+
+  .navLinkActive {
+    border-left-color: transparent !important;
+    border-bottom-color: var(--accent) !important;
+  }
+
+  .navFooter {
+    flex-direction: row;
+    border-top: none;
+    border-left: 1px solid var(--border);
+    padding: 0;
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .logoutBtn {
+    border: none;
+    border-radius: 0;
+    padding: 12px 14px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+
+  .main { padding: 20px 16px; }
+
+  .statsRow { grid-template-columns: repeat(2, 1fr); }
+
+  .table { font-size: 12px; }
+  .table th, .table td { padding: 8px 10px; }
+}

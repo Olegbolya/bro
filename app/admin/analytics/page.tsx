@@ -132,7 +132,7 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Top pages + Traffic sources */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px', marginBottom: '24px' }}>
             <div className={styles.tableWrap}>
               <div style={{ padding: '16px 16px 0', borderBottom: '1px solid var(--border)', marginBottom: '0' }}>
                 <h2 style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px' }}>
@@ -171,7 +171,7 @@ export default function AnalyticsPage() {
           </div>
 
           {/* Countries + Hourly chart */}
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
             <div className={styles.tableWrap}>
               <div style={{ padding: '16px 16px 0', borderBottom: '1px solid var(--border)' }}>
                 <h2 style={{ fontSize: '11px', fontWeight: 600, color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.8px', marginBottom: '12px' }}>
