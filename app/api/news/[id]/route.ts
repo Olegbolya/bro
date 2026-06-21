@@ -10,8 +10,10 @@ async function requireAdmin() {
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   try {
+    const session = await getSession()
     const item = await db.news.findUnique({ where: { id: parseInt(params.id) } })
     if (!item) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+    if (!item.published && !session.isAdmin) return NextResponse.json({ error: 'Not found' }, { status: 404 })
     return NextResponse.json(item)
   } catch {
     return NextResponse.json({ error: 'Server error' }, { status: 500 })

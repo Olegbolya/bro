@@ -22,6 +22,7 @@ export default function AdminNewsPage() {
   const [form, setForm] = useState(emptyForm)
   const [fullContent, setFullContent] = useState('')
   const [editId, setEditId] = useState<number | null>(null)
+  const [formKey, setFormKey] = useState(0)
   const [showForm, setShowForm] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
@@ -64,7 +65,7 @@ export default function AdminNewsPage() {
   }
 
   async function save() {
-    if (!form.title.trim() || !form.excerpt.trim() || !fullContent.trim()) {
+    if (!form.title.trim() || !form.excerpt.trim() || !fullContent.replace(/<[^>]*>/g, '').trim()) {
       setError('Заполните заголовок, анонс и содержимое'); return
     }
     setSaving(true); setError('')
@@ -106,6 +107,7 @@ export default function AdminNewsPage() {
     const r = await fetch(`/api/news/${item.id}`)
     const full = await r.json()
     setEditId(item.id)
+    setFormKey(k => k + 1)
     setForm({ title: full.title, slug: full.slug, excerpt: full.excerpt, content: '', imageUrl: full.imageUrl || '', published: full.published })
     setFullContent(full.content || '')
     setShowForm(true); setError(''); setUploadError('')
@@ -113,6 +115,7 @@ export default function AdminNewsPage() {
 
   function cancel() {
     setForm(emptyForm); setFullContent(''); setEditId(null)
+    setFormKey(k => k + 1)
     setShowForm(false); setError(''); setUploadError('')
   }
 
@@ -123,7 +126,7 @@ export default function AdminNewsPage() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '32px' }}>
         <h1 className={styles.pageTitle} style={{ margin: 0 }}>Новости</h1>
         {!showForm && (
-          <button onClick={() => { setShowForm(true); setError('') }}
+          <button onClick={() => { setShowForm(true); setFormKey(k => k + 1); setError('') }}
             style={{ padding: '8px 16px', background: 'var(--accent)', border: 'none', borderRadius: 'var(--radius-sm)', color: '#000', fontWeight: 600, cursor: 'pointer', fontSize: '14px' }}>
             + Добавить
           </button>
@@ -152,7 +155,7 @@ export default function AdminNewsPage() {
             </div>
             <div>
               <label style={{ display: 'block', fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Содержимое *</label>
-              <QuillEditor key={editId ?? 'new'} initialValue={fullContent} onChange={setFullContent} />
+              <QuillEditor key={formKey} initialValue={fullContent} onChange={setFullContent} />
             </div>
 
             {/* Image upload */}
