@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import styles from '@/app/(site)/news/news.module.css'
 
@@ -40,20 +41,23 @@ export default function NewsTabs({ news, updates }: Props) {
             <p>Следите за нашими соцсетями и скоро здесь появятся первые публикации.</p>
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {news.map(item => (
-              <article key={item.id} style={{ background: 'var(--surface-1)', border: '1px solid var(--border)', borderRadius: 'var(--radius-card)', padding: '24px', display: 'flex', gap: '20px' }}>
-                {item.imageUrl && (
-                  <img src={item.imageUrl} alt="" style={{ width: '120px', height: '80px', objectFit: 'cover', borderRadius: 'var(--radius-sm)', flexShrink: 0 }} />
-                )}
-                <div style={{ flex: 1, minWidth: 0 }}>
-                  <p style={{ fontSize: '12px', color: 'var(--text-secondary)', marginBottom: '8px' }}>
-                    {new Date(item.createdAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}
-                  </p>
-                  <h2 style={{ fontSize: '18px', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)' }}>{item.title}</h2>
-                  <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6 }}>{item.excerpt}</p>
-                </div>
-              </article>
+              <Link key={item.id} href={`/news/${item.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
+                <article className={styles.newsCard}>
+                  {item.imageUrl && (
+                    <img src={item.imageUrl} alt="" className={styles.newsCardImg} />
+                  )}
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', fontFamily: 'monospace' }}>
+                      {new Date(item.createdAt).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </p>
+                    <h2 style={{ fontSize: '17px', fontWeight: 700, marginBottom: '8px', color: 'var(--text-primary)', lineHeight: 1.35 }}>{item.title}</h2>
+                    <p style={{ fontSize: '14px', color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '12px' }}>{item.excerpt}</p>
+                    <span style={{ fontSize: '13px', color: 'var(--accent)', fontWeight: 500 }}>Читать далее →</span>
+                  </div>
+                </article>
+              </Link>
             ))}
           </div>
         )

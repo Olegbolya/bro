@@ -24,6 +24,32 @@
 .tab:hover { color: var(--text-primary); }
 .tabActive { background: var(--surface-2); color: var(--text-primary) !important; }
 
+.newsCard {
+  background: var(--surface-1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card);
+  padding: 24px;
+  display: flex;
+  gap: 20px;
+  transition: border-color 0.2s, background 0.2s;
+  cursor: pointer;
+}
+.newsCard:hover {
+  border-color: var(--accent);
+  background: var(--surface-2);
+}
+.newsCardImg {
+  width: 130px;
+  height: 86px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+@media (max-width: 500px) {
+  .newsCard { flex-direction: column; }
+  .newsCardImg { width: 100%; height: 160px; }
+}
+
 .empty {
   text-align: center;
   padding: 80px 20px;
