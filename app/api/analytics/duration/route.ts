@@ -7,7 +7,8 @@ export async function POST(req: NextRequest) {
     if (!id || !duration) return NextResponse.json({ ok: false }, { status: 400 })
     await db.pageView.update({ where: { id }, data: { duration } })
     return NextResponse.json({ ok: true })
-  } catch {
+  } catch (e) {
+    console.error('[analytics/duration] POST error:', e)
     return NextResponse.json({ ok: false }, { status: 500 })
   }
 }

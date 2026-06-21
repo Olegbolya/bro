@@ -5,6 +5,7 @@ import { db } from '@/lib/db'
 import styles from './page.module.css'
 
 const VisitsChart = dynamicImport(() => import('@/components/charts/VisitsChart'), { ssr: false })
+const PublicStats = dynamicImport(() => import('@/components/charts/PublicStats'), { ssr: false })
 
 export const dynamic = 'force-dynamic'
 
@@ -132,6 +133,7 @@ export default async function HomePage() {
             <p className={styles.chartLabel}>Посещения за последние 30 дней</p>
             <VisitsChart />
           </div>
+          <PublicStats />
         </div>
       </section>
 

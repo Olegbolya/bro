@@ -51,7 +51,8 @@ export async function POST(request: NextRequest) {
       },
     })
     return NextResponse.json({ ok: true })
-  } catch {
+  } catch (e) {
+    console.error('[feedback] POST error:', e)
     return NextResponse.json({ error: 'Ошибка сервера' }, { status: 500 })
   }
 }

@@ -1,5 +1,6 @@
 'use client'
 
+import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import styles from '@/app/(site)/news/news.module.css'
@@ -46,7 +47,9 @@ export default function NewsTabs({ news, updates }: Props) {
               <Link key={item.id} href={`/news/${item.slug}`} style={{ textDecoration: 'none', color: 'inherit', display: 'block' }}>
                 <article className={styles.newsCard}>
                   {item.imageUrl && (
-                    <img src={item.imageUrl} alt="" className={styles.newsCardImg} />
+                    <div className={styles.newsCardImgWrap}>
+                      <Image src={item.imageUrl} alt="" fill sizes="130px" style={{ objectFit: 'cover' }} />
+                    </div>
                   )}
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <p style={{ fontSize: '11px', color: 'var(--text-secondary)', marginBottom: '6px', textTransform: 'uppercase', letterSpacing: '0.5px', fontFamily: 'monospace' }}>

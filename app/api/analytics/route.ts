@@ -49,7 +49,8 @@ export async function POST(req: NextRequest) {
     }
 
     return NextResponse.json({ id: view.id })
-  } catch {
+  } catch (e) {
+    console.error('[analytics] POST error:', e)
     return NextResponse.json({ ok: false }, { status: 500 })
   }
 }
@@ -152,7 +153,8 @@ export async function GET(req: NextRequest) {
       byCountry,
       byHour,
     })
-  } catch {
+  } catch (e) {
+    console.error('[analytics] GET error:', e)
     return NextResponse.json({ error: 'Server error' }, { status: 500 })
   }
 }

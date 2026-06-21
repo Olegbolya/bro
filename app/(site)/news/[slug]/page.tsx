@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { db } from '@/lib/db'
@@ -94,16 +95,14 @@ export default async function NewsArticlePage({ params }: Props) {
 
         {/* Cover image */}
         {article.imageUrl && (
-          <div style={{
-            marginBottom: '40px',
-            border: '1px solid var(--border-accent)',
-            overflow: 'hidden',
-          }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
+          <div style={{ position: 'relative', marginBottom: '40px', border: '1px solid var(--border-accent)', overflow: 'hidden', height: '420px' }}>
+            <Image
               src={article.imageUrl}
               alt={article.title}
-              style={{ width: '100%', maxHeight: '420px', objectFit: 'cover', display: 'block' }}
+              fill
+              sizes="(max-width: 780px) 100vw, 780px"
+              style={{ objectFit: 'cover' }}
+              priority
             />
           </div>
         )}

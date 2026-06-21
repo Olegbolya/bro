@@ -36,6 +36,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json(news)
   } catch (e: unknown) {
     const msg = e instanceof Error ? e.message : 'Server error'
+    if (msg !== 'Unauthorized') console.error('[news] GET error:', e)
     return NextResponse.json({ error: msg }, { status: msg === 'Unauthorized' ? 401 : 500 })
   }
 }
@@ -70,6 +71,7 @@ export async function POST(req: NextRequest) {
     if (msg.includes('Unique constraint')) {
       return NextResponse.json({ error: 'Slug уже занят' }, { status: 409 })
     }
+    if (msg !== 'Unauthorized') console.error('[news] POST error:', e)
     return NextResponse.json({ error: msg }, { status: msg === 'Unauthorized' ? 401 : 500 })
   }
 }

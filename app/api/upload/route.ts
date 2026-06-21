@@ -58,6 +58,7 @@ export async function POST(request: NextRequest) {
     const blob = await put(key, uploadBuffer, { access: 'public', contentType })
     return NextResponse.json({ url: blob.url })
   } catch (e: unknown) {
+    console.error('[upload] POST error:', e)
     const msg = e instanceof Error ? e.message : 'Ошибка загрузки'
     return NextResponse.json({ error: msg }, { status: 500 })
   }
