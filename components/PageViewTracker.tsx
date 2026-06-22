@@ -12,18 +12,32 @@ import { usePathname } from 'next/navigation'
 // Создаёт или возвращает уже существующий идентификатор сессии из sessionStorage.
 // sessionStorage сбрасывается при закрытии вкладки — это и есть граница «сессии».
 // try/catch нужен на случай, если sessionStorage заблокирован (режим инкогнито и т.д.)
+// Резервный id уровня модуля — используется если оба Storage недоступны.
+// Живёт столько же, сколько вкладка (модуль не перезагружается при SPA-навигации).
+let _memorySessionId: string | null = null
+
 function getOrCreateSessionId(): string {
+  const key = 'bro_sid'
+  const newId = () => Math.random().toString(36).slice(2) + Date.now().toString(36)
+
+  // Пробуем sessionStorage (сбрасывается при закрытии вкладки — граница сессии)
   try {
-    let id = sessionStorage.getItem('bro_sid')
-    if (!id) {
-      id = Math.random().toString(36).slice(2) + Date.now().toString(36)
-      sessionStorage.setItem('bro_sid', id)
-    }
+    let id = sessionStorage.getItem(key)
+    if (!id) { id = newId(); sessionStorage.setItem(key, id) }
     return id
-  } catch {
-    // Если sessionStorage недоступен — генерируем одноразовый id
-    return Math.random().toString(36).slice(2)
-  }
+  } catch { /* sessionStorage недоступен */ }
+
+  // Fallback: localStorage (сохраняется между вкладками, но лучше фиксированного id
+  // чем нового на каждый вызов — иначе каждая страница = новая сессия → 100% отказов)
+  try {
+    let id = localStorage.getItem(key)
+    if (!id) { id = newId(); localStorage.setItem(key, id) }
+    return id
+  } catch { /* localStorage тоже недоступен */ }
+
+  // Последний резерв: id в памяти — живёт пока открыта вкладка
+  if (!_memorySessionId) _memorySessionId = newId()
+  return _memorySessionId
 }
 
 export default function PageViewTracker() {
