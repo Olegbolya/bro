@@ -10,7 +10,7 @@ async function main() {
   if (bannerCount === 0) {
     await db.banner.create({
       data: {
-        text: '🤖 Арена БРО открыта! Регистрация на первый турнир уже началась.',
+        text: '🤖 Арена БРО открыта!',
         active: true,
       },
     })
