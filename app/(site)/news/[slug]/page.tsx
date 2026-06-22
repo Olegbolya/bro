@@ -4,13 +4,15 @@ import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { db } from '@/lib/db'
 
+export const dynamic = 'force-dynamic'
+
 interface Props {
   params: { slug: string }
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
-    const article = await db.news.findUnique({
+    const article = await db.news.findFirst({
       where: { slug: params.slug, published: true },
       select: { title: true, excerpt: true, imageUrl: true },
     })
@@ -28,13 +30,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function NewsArticlePage({ params }: Props) {
-  let article: Awaited<ReturnType<typeof db.news.findUnique>> = null
+  let article = null
 
   try {
-    article = await db.news.findUnique({
+    article = await db.news.findFirst({
       where: { slug: params.slug, published: true },
     })
-  } catch {}
+  } catch (e) {
+    console.error('[news/slug] DB error:', e)
+  }
 
   if (!article) notFound()
 
