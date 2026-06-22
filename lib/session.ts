@@ -15,8 +15,9 @@ const sessionOptions = {
   // SESSION_SECRET должен быть длиной не менее 32 символов (требование iron-session)
   password: process.env.SESSION_SECRET as string,
   cookieOptions: {
-    // secure:true — cookie передаётся только по HTTPS; в dev отключено для localhost
-    secure: process.env.NODE_ENV === 'production',
+    // COOKIE_SECURE=false в .env позволяет работать через HTTP до настройки SSL на VPS.
+    // После получения сертификата эту строку из .env нужно удалить.
+    secure: process.env.COOKIE_SECURE !== 'false' && process.env.NODE_ENV === 'production',
     maxAge: 60 * 60 * 24 * 7, // 7 дней
   },
 }
