@@ -1,3 +1,6 @@
+// API-роут для записей обновлений проекта (changelog/версии).
+// GET  — публичный список последних 20 обновлений; ?all=1 возвращает до 200 (только для admin)
+// POST — добавить новую запись (только для администратора)
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/session'

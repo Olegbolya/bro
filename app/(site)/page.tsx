@@ -1,12 +1,17 @@
+// Главная страница сайта: hero, описание проекта, демо-видео, статистика посещаемости.
+// Компоненты с графиками (VisitsChart, PublicStats) загружаются динамически с ssr:false,
+// потому что Chart.js требует доступа к DOM и не совместим с серверным рендерингом.
 import type { Metadata } from 'next'
 import dynamicImport from 'next/dynamic'
 import Link from 'next/link'
 import { db } from '@/lib/db'
 import styles from './page.module.css'
 
+// ssr:false — не пытаться рендерить Chart.js на сервере
 const VisitsChart = dynamicImport(() => import('@/components/charts/VisitsChart'), { ssr: false })
 const PublicStats = dynamicImport(() => import('@/components/charts/PublicStats'), { ssr: false })
 
+// force-dynamic — запрещает кэширование страницы в Next.js, чтобы счётчики всегда были свежими
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {

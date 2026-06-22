@@ -1,3 +1,6 @@
+// Страница управления новостями в панели администратора.
+// Позволяет создавать, редактировать, удалять и публиковать/скрывать новости.
+// QuillEditor загружается динамически с ssr:false (требование Chart.js и Quill).
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
@@ -22,6 +25,9 @@ export default function AdminNewsPage() {
   const [form, setForm] = useState(emptyForm)
   const [fullContent, setFullContent] = useState('')
   const [editId, setEditId] = useState<number | null>(null)
+  // formKey — счётчик, изменение которого вызывает полное пересоздание QuillEditor.
+  // Нужно при переключении между «создать» и «редактировать»: Quill не перерендеривается
+  // через пропсы, поэтому меняем key, чтобы React полностью размонтировал и смонтировал его.
   const [formKey, setFormKey] = useState(0)
   const [showForm, setShowForm] = useState(false)
   const [saving, setSaving] = useState(false)

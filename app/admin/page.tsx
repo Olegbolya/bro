@@ -1,6 +1,9 @@
+// Главная страница панели администратора (/admin) — дашборд с ключевыми счётчиками.
+// Показывает посещения за сегодня, количество новых заявок и опубликованных новостей.
 import { db } from '@/lib/db'
 import styles from './admin.module.css'
 
+// force-dynamic — без кэша, чтобы счётчики отражали актуальные данные при каждом заходе
 export const dynamic = 'force-dynamic'
 
 export default async function AdminDashboard() {

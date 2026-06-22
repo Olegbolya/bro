@@ -1,3 +1,6 @@
+// Страница входа в панель администратора (/admin/login).
+// После успешного входа router.refresh() принудительно обновляет кэш Next.js,
+// чтобы AdminNav и другие server-компоненты получили актуальное состояние сессии.
 'use client'
 
 import { useState } from 'react'

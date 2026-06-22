@@ -1,3 +1,6 @@
+// Корневой layout всего приложения.
+// Устанавливает глобальные метаданные (SEO), подключает CSS и задаёт lang="ru".
+// Все остальные layouts (site, admin, embed) вложены в этот.
 import type { Metadata } from 'next'
 import './globals.css'
 

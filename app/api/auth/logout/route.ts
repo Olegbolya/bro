@@ -1,3 +1,6 @@
+// API-роут выхода из системы.
+// session.destroy() стирает зашифрованную cookie на клиенте,
+// делая сессию недействительной без необходимости хранить список отозванных токенов.
 import { NextResponse } from 'next/server'
 import { getSession } from '@/lib/session'
 

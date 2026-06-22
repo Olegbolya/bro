@@ -5,7 +5,9 @@ desktop.ini
 .vercel
 .next/
 node_modules/
+.env
 .env.local
 .env*.local
 
-/public/uploads/
+/public/uploads/**
+!/public/uploads/**/.gitkeep

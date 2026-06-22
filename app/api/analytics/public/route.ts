@@ -1,6 +1,10 @@
+// Публичный эндпоинт аналитики для графиков на главной странице сайта.
+// Возвращает агрегированные данные за последние 30 дней без персональной информации.
+// Не требует авторизации — данные обезличены (нет IP, sessionId и т.д.).
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 
+// force-dynamic — отключает кэширование Next.js, чтобы данные всегда были актуальными
 export const dynamic = 'force-dynamic'
 
 export async function GET() {

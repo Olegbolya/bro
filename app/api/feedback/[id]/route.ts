@@ -1,7 +1,11 @@
+// API-роут для управления отдельным сообщением обратной связи (только для администратора).
+// PATCH  — изменить статус обработки сообщения (new → read → in_progress → archived)
+// DELETE — удалить сообщение
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/session'
 
+// Перечень допустимых статусов; любое другое значение отклоняется
 const validStatuses = ['new', 'read', 'in_progress', 'archived']
 
 export async function PATCH(req: NextRequest, { params }: { params: { id: string } }) {

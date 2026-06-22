@@ -1,3 +1,6 @@
+// API-роут для редактирования / удаления конкретной записи обновления проекта.
+// PATCH  — частичное обновление полей (только для администратора)
+// DELETE — удаление записи (только для администратора)
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/session'
@@ -11,6 +14,7 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
   try {
     await requireAdmin()
     const body = await req.json()
+    // Обновляем только те поля, которые явно переданы в теле запроса
     const data: Record<string, unknown> = {}
     if (body.version !== undefined) data.version = body.version.trim()
     if (body.title !== undefined) data.title = body.title.trim()

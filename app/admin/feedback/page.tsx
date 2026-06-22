@@ -1,3 +1,6 @@
+// Страница просмотра заявок из контактной формы в панели администратора.
+// Строки таблицы кликабельны: клик разворачивает полный текст сообщения.
+// Статус можно менять прямо из таблицы через select без перехода на отдельную страницу.
 'use client'
 
 import { useEffect, useState, Fragment } from 'react'
@@ -18,6 +21,7 @@ const statusColor: Record<string, string> = {
 
 export default function FeedbackPage() {
   const [messages, setMessages] = useState<Message[]>([])
+  // expanded хранит id раскрытого сообщения; null — ни одно не раскрыто
   const [expanded, setExpanded] = useState<number | null>(null)
 
   async function load() {

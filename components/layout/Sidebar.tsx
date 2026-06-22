@@ -1,3 +1,5 @@
+// Постоянный левый сайдбар с навигацией, кнопкой «Играть» и ссылками на соцсети.
+// На мобильных устройствах сворачивается в гамбургер-меню (header + overlay).
 'use client'
 
 import Link from 'next/link'
@@ -28,10 +30,12 @@ const socialLinks = [
 
 export default function Sidebar() {
   const pathname = usePathname()
+  // open управляет видимостью сайдбара на мобильных (hamburger toggle)
   const [open, setOpen] = useState(false)
 
   return (
     <>
+      {/* Мобильная шапка: логотип + кнопка гамбургера */}
       <div className={styles.mobileHeader}>
         <Link href="/" className={styles.mobileLogo}>БРО</Link>
         <button className={styles.burger} onClick={() => setOpen(o => !o)} aria-label="Меню">
@@ -39,6 +43,7 @@ export default function Sidebar() {
         </button>
       </div>
 
+      {/* Полупрозрачный оверлей закрывает меню при клике вне сайдбара */}
       {open && <div className={styles.overlay} onClick={() => setOpen(false)} />}
 
       <aside className={`${styles.sidebar} ${open ? styles.sidebarOpen : ''}`}>

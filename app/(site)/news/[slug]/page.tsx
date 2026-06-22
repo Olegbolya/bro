@@ -1,9 +1,13 @@
+// Страница отдельной статьи новостей (/news/[slug]).
+// Slug — человекочитаемый URL-идентификатор статьи (не числовой id).
+// generateMetadata позволяет задавать SEO-заголовок и OpenGraph-картинку динамически.
 import type { Metadata } from 'next'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { db } from '@/lib/db'
 
+// force-dynamic — без кэша, чтобы изменения статьи сразу отображались на сайте
 export const dynamic = 'force-dynamic'
 
 interface Props {
@@ -12,8 +16,9 @@ interface Props {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
+    const slug = decodeURIComponent(params.slug)
     const article = await db.news.findFirst({
-      where: { slug: params.slug, published: true },
+      where: { slug, published: true },
       select: { title: true, excerpt: true, imageUrl: true },
     })
     if (!article) return { title: 'Новость не найдена — БРО' }
@@ -32,9 +37,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function NewsArticlePage({ params }: Props) {
   let article = null
 
+  // Явно декодируем slug — защита от URL-кодирования кириллицы в некоторых браузерах/окружениях
+  const slug = decodeURIComponent(params.slug)
+
   try {
+    // findFirst вместо findUnique: Prisma 5 запрещает комбинировать @unique-поле (slug)
+    // с обычным полем (published) в where у findUnique — бросает PrismaClientValidationError.
+    // findFirst принимает любую комбинацию условий.
     article = await db.news.findFirst({
-      where: { slug: params.slug, published: true },
+      where: { slug, published: true },
     })
   } catch (e) {
     console.error('[news/slug] DB error:', e)
@@ -111,7 +122,8 @@ export default async function NewsArticlePage({ params }: Props) {
           </div>
         )}
 
-        {/* Article content */}
+        {/* HTML-содержимое статьи. dangerouslySetInnerHTML безопасен здесь,
+            потому что content был санитизирован через sanitize-html при сохранении */}
         <div
           className="article-body"
           dangerouslySetInnerHTML={{ __html: article.content }}

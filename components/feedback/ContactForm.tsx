@@ -1,3 +1,6 @@
+// Форма обратной связи на странице /contacts.
+// Отправляет данные на POST /api/feedback. Клиентская валидация минимальна
+// (required + type="email") — основная валидация происходит на сервере.
 'use client'
 
 import { useState } from 'react'
@@ -12,9 +15,11 @@ interface FormState {
 
 export default function ContactForm() {
   const [form, setForm] = useState<FormState>({ name: '', email: '', subject: '', message: '' })
+  // status управляет внешним видом формы: idle / загрузка / успех / ошибка
   const [status, setStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
   const [errorMsg, setErrorMsg] = useState('')
 
+  // Фабрика обработчиков изменения полей — возвращает функцию для конкретного поля
   function set(field: keyof FormState) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
       setForm(prev => ({ ...prev, [field]: e.target.value }))

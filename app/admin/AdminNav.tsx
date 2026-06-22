@@ -1,3 +1,6 @@
+// Боковая навигация панели администратора.
+// Клиентский компонент — нужен для определения активного пункта меню (usePathname)
+// и обработки кнопки «Выйти» (logout через fetch + router).
 'use client'
 
 import Link from 'next/link'
@@ -17,6 +20,7 @@ export default function AdminNav() {
   const pathname = usePathname()
   const router = useRouter()
 
+  // Уничтожаем сессию на сервере, затем переходим на страницу входа и сбрасываем кэш
   async function logout() {
     await fetch('/api/auth/logout', { method: 'POST' })
     router.push('/admin/login')

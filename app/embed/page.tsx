@@ -1,16 +1,22 @@
+// Страница WebRTC-трансляции арены (/embed).
+// Показывает прямой видеопоток с арены через WebRTC (WHiP/WHaP) поверх canvas-оверлея
+// с маркерами AprilTag для отображения позиций роботов в реальном времени.
+// Параметры URL: ?id=R1&name=Игрок1&color=%23ff0000 (можно повторять для нескольких роботов)
 'use client'
 
 import { useEffect, useRef } from 'react'
 
+// Конфигурация подключения к медиасерверу и WebSocket детектора тегов
 const CONFIG = {
   domain: 'miniserv.robo-arena.ru',
-  streamHigh: 'polygon_high',
-  streamLow: 'polygon_low',
+  streamHigh: 'polygon_high', // HD-поток (основной)
+  streamLow: 'polygon_low',   // SD-поток (переключается автоматически при потерях пакетов)
   user: 'bro',
   pass: 'zaq1xsw2',
-  tagsWsUrl: 'wss://play.robo-arena.ru/ws-detect',
+  tagsWsUrl: 'wss://play.robo-arena.ru/ws-detect', // WebSocket сервер компьютерного зрения
 }
 
+// Соответствие имён роботов (R1..R4) числовым идентификаторам AprilTag-маркеров
 const ROBOT_MAP: Record<string, number> = { R1: 101, R2: 102, R3: 103, R4: 104 }
 
 interface TagData {
@@ -58,6 +64,9 @@ export default function EmbedPage() {
       if (statusRef.current) { statusRef.current.innerText = text; if (color) statusRef.current.style.color = color }
     }
 
+    // Периодически опрашивает WebRTC-статистику: ping, jitter, потери пакетов.
+    // Если framesDecoded не меняется 5 секунд подряд (чёрный экран) — переподключаемся.
+    // Если потерь пакетов > 30 за секунду — переключаемся на низкое качество (SD).
     function startStats() {
       if (statsInterval) clearInterval(statsInterval)
       let lastPacketsLost = 0
@@ -69,12 +78,14 @@ export default function EmbedPage() {
             if (pingRef.current) pingRef.current.innerText = String(Math.round(report.currentRoundTripTime * 1000))
           if (report.type === 'inbound-rtp' && report.kind === 'video') {
             if (jitterRef.current) jitterRef.current.innerText = String(Math.round(report.jitter * 1000))
+            // Детектируем зависший поток: если framesDecoded не растёт 5 итераций — переподключаем
             if (report.framesDecoded === lastFramesDecoded) blackScreenTimer++
             else blackScreenTimer = 0
             lastFramesDecoded = report.framesDecoded
             if (blackScreenTimer >= 5) { blackScreenTimer = 0; connectVideo() }
             const losses = report.packetsLost - lastPacketsLost
             lastPacketsLost = report.packetsLost
+            // Адаптивное переключение качества при плохом соединении
             if (losses > 30 && currentStream === CONFIG.streamHigh) {
               currentStream = CONFIG.streamLow
               isSwitching = true
@@ -126,6 +137,9 @@ export default function EmbedPage() {
       ws.onclose = () => { if (!isSwitching && mounted) setTimeout(connectVideo, 3000) }
     }
 
+    // Подключается к WebSocket серверу компьютерного зрения.
+    // Сервер присылает массив обнаруженных AprilTag-маркеров с координатами.
+    // При потере соединения автоматически переподключается через 2 секунды.
     function connectTagsWS() {
       wsTags = new WebSocket(CONFIG.tagsWsUrl)
       wsTags.onopen = () => { if (wsStatusRef.current) { wsStatusRef.current.innerText = 'ONLINE'; wsStatusRef.current.style.color = '#0f0' } }
@@ -168,6 +182,8 @@ export default function EmbedPage() {
       ctx.stroke()
     }
 
+    // Цикл отрисовки HUD через requestAnimationFrame.
+    // Каждый кадр очищает canvas и рисует маркеры для всех активных роботов.
     function hudLoop() {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
       latestTags.forEach(tag => {

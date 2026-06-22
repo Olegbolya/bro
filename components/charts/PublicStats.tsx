@@ -1,3 +1,6 @@
+// Компонент публичной статистики: топ-5 стран посетителей и среднее время на сайте.
+// Данные берутся из /api/analytics/public — публичного, обезличенного эндпоинта.
+// Показывается на главной странице под графиком посещаемости.
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -7,6 +10,7 @@ interface PublicData {
   avgDuration: number | null
 }
 
+// Форматирует количество секунд в читаемую строку «X мин Y сек»
 function fmtDur(s: number | null): string {
   if (!s) return '—'
   if (s < 60) return `${s} сек`
@@ -29,6 +33,7 @@ export default function PublicStats() {
 
   if (!data || (data.countries.length === 0 && !data.avgDuration)) return null
 
+  // maxCnt используется для нормализации ширины баров (самая популярная страна = 100%)
   const maxCnt = data.countries.reduce((m, c) => Math.max(m, c.cnt), 1)
 
   return (

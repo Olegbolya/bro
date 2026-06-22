@@ -1,14 +1,21 @@
+// API-роут для формы обратной связи.
+// POST — принять сообщение от посетителя и сохранить в ContactMessage.
+//        Ограничение: 3 отправки в час с одного IP (защита от спама).
+// GET  — список всех сообщений для admin-панели (только для администратора).
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/session'
 
-// Простой rate limit в памяти (для serverless — достаточно для старта)
+// Счётчики отправок в памяти процесса. Простой rate limit для одного инстанса VPS.
+// При горизонтальном масштабировании потребуется Redis или аналог.
 const ipLimits = new Map<string, { count: number; reset: number }>()
 
+// Возвращает true, если IP не превысил лимит (3 сообщения в час)
 function checkRateLimit(ip: string): boolean {
   const now = Date.now()
   const entry = ipLimits.get(ip)
   if (!entry || now > entry.reset) {
+    // Первая отправка за последний час — инициализируем счётчик
     ipLimits.set(ip, { count: 1, reset: now + 60 * 60 * 1000 })
     return true
   }
@@ -34,6 +41,7 @@ export async function POST(request: NextRequest) {
   if (!name?.trim() || !email?.trim() || !subject?.trim() || !message?.trim()) {
     return NextResponse.json({ error: 'Заполните все поля' }, { status: 400 })
   }
+  // Базовая проверка формата email на сервере (дублирует клиентскую валидацию)
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     return NextResponse.json({ error: 'Некорректный email' }, { status: 400 })
   }
@@ -44,6 +52,7 @@ export async function POST(request: NextRequest) {
   try {
     await db.contactMessage.create({
       data: {
+        // slice гарантирует, что длина не превысит ограничения схемы БД
         name: name.trim().slice(0, 100),
         email: email.trim().slice(0, 200),
         subject: subject.trim().slice(0, 200),
@@ -63,7 +72,7 @@ export async function GET() {
 
   const messages = await db.contactMessage.findMany({
     orderBy: { createdAt: 'desc' },
-    take: 100,
+    take: 100, // возвращаем последние 100 сообщений; для архива понадобится пагинация
   })
   return NextResponse.json(messages)
 }

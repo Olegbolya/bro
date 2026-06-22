@@ -1,3 +1,6 @@
+// Компонент вкладок страницы /news: «Новости» и «История обновлений».
+// Активная вкладка хранится в URL (?tab=news или ?tab=updates), а не в state —
+// это позволяет сохранять состояние при навигации «назад/вперёд» и шарить ссылки.
 'use client'
 
 import Image from 'next/image'
@@ -23,6 +26,7 @@ export default function NewsTabs({ news, updates }: Props) {
   const searchParams = useSearchParams()
   const tab = searchParams.get('tab') ?? 'news'
 
+  // scroll:false — не прокручиваем страницу наверх при смене вкладки
   function setTab(t: string) {
     router.push(`/news?tab=${t}`, { scroll: false })
   }

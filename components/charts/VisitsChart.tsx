@@ -1,3 +1,6 @@
+// График посещаемости сайта за последние 30 дней (линейный, Chart.js).
+// Импортируется динамически с ssr:false из родительского компонента,
+// потому что Chart.js обращается к window/canvas и не работает на сервере.
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -12,6 +15,7 @@ import {
 } from 'chart.js'
 import { Line } from 'react-chartjs-2'
 
+// Регистрируем только нужные компоненты Chart.js — это уменьшает размер бандла
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Filler, Tooltip)
 
 interface DayData { day: string; cnt: number }

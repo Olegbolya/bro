@@ -1,3 +1,6 @@
+// Скрипт начального заполнения базы данных (npm run db:seed).
+// Создаёт тестовые данные только если таблицы пусты — безопасно запускать повторно.
+// Запускать после: npx prisma db push (создаёт таблицы по схеме).
 import { PrismaClient } from '@prisma/client'
 
 const db = new PrismaClient()
@@ -5,7 +8,7 @@ const db = new PrismaClient()
 async function main() {
   console.log('Seeding database...')
 
-  // Initial banner
+  // Создаём приветственный баннер только если таблица пуста
   const bannerCount = await db.banner.count()
   if (bannerCount === 0) {
     await db.banner.create({
@@ -17,7 +20,7 @@ async function main() {
     console.log('Created initial banner')
   }
 
-  // Demo news article
+  // Создаём демонстрационную новость только если нет ни одной статьи
   const newsCount = await db.news.count()
   if (newsCount === 0) {
     await db.news.create({
@@ -41,7 +44,7 @@ async function main() {
     console.log('Created demo news article')
   }
 
-  // Demo project update
+  // Создаём запись о первом релизе только если история обновлений пуста
   const updateCount = await db.projectUpdate.count()
   if (updateCount === 0) {
     await db.projectUpdate.create({

@@ -1,3 +1,5 @@
+// Страница контактов (/contacts): реквизиты проекта и форма обратной связи.
+// Статическая страница — данные не меняются динамически, кэшируется Next.js по умолчанию.
 import type { Metadata } from 'next'
 import ContactForm from '@/components/feedback/ContactForm'
 import styles from './contacts.module.css'

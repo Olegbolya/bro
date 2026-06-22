@@ -1,3 +1,6 @@
+// API-роут для управления сайтовыми баннерами (только для администратора).
+// GET  — список всех баннеров для admin-панели
+// POST — создать новый баннер; поле expiresAt опционально (null = не истекает)
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/session'
@@ -28,6 +31,7 @@ export async function POST(req: NextRequest) {
       data: {
         text: text.trim(),
         active: !!active,
+        // null означает «показывать бессрочно»; дата — автоматическое снятие баннера
         expiresAt: expiresAt ? new Date(expiresAt) : null,
       },
     })

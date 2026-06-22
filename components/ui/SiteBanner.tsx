@@ -1,3 +1,7 @@
+// Компонент уведомительного баннера, отображаемого над всем содержимым сайта.
+// При монтировании запрашивает активный баннер из /api/banners/active.
+// Пользователь может скрыть баннер кнопкой «×» (dismissed сохраняется только в памяти,
+// т.е. баннер снова появится при обновлении страницы — намеренно, чтобы не хранить данные).
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -9,10 +13,11 @@ export default function SiteBanner() {
   const [dismissed, setDismissed] = useState(false)
 
   useEffect(() => {
+    // Запрос баннера только на клиенте — API возвращает null если активных баннеров нет
     fetch('/api/banners/active')
       .then(r => r.ok ? r.json() : null)
       .then(d => { if (d) setBanner(d) })
-      .catch(() => {})
+      .catch(() => {}) // ошибка сети не должна ломать страницу
   }, [])
 
   if (!banner || dismissed) return null

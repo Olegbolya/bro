@@ -1,3 +1,6 @@
+// API-роут для изменения / удаления конкретного баннера (только для администратора).
+// PATCH  — обновить текст, статус active или срок действия (частичное обновление)
+// DELETE — удалить баннер
 import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { getSession } from '@/lib/session'
@@ -13,6 +16,8 @@ export async function PATCH(req: NextRequest, { params }: { params: { id: string
     const id = parseInt(params.id)
     const { text, active, expiresAt } = await req.json()
 
+    // Spread с условием — включаем поле в data только если оно передано в теле запроса.
+    // Это позволяет, например, переключить active не трогая text.
     const banner = await db.banner.update({
       where: { id },
       data: {

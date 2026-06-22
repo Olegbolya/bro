@@ -1,3 +1,7 @@
+// Страница списка новостей и истории обновлений (/news).
+// Данные загружаются на сервере (Server Component), передаются в клиентский NewsTabs.
+// Suspense нужен потому, что NewsTabs использует useSearchParams — это требование Next.js
+// при наличии поискового параметра в URL в server-rendered окружении.
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import { db } from '@/lib/db'
@@ -5,6 +9,7 @@ import NewsTabs from '@/components/news/NewsTabs'
 import type { NewsItem, UpdateItem } from '@/components/news/NewsTabs'
 import styles from './news.module.css'
 
+// force-dynamic — не кэшируем страницу, чтобы новые статьи сразу появлялись без ребилда
 export const dynamic = 'force-dynamic'
 
 export const metadata: Metadata = {
@@ -26,6 +31,7 @@ export default async function NewsPage() {
       }),
       db.projectUpdate.findMany({ orderBy: { date: 'desc' }, take: 20 }),
     ])
+    // Преобразуем Date в ISO-строки — Date не сериализуется при передаче из Server в Client Component
     news = rawNews.map(n => ({ ...n, createdAt: n.createdAt.toISOString() }))
     updates = rawUpdates.map(u => ({ ...u, date: u.date.toISOString(), createdAt: u.createdAt.toISOString() }))
   } catch {}

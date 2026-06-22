@@ -1,3 +1,7 @@
+// Дашборд аналитики в панели администратора.
+// Отображает статистику посещаемости: просмотры, уникальных посетителей, среднее время,
+// показатель отказов, топ страниц, источники трафика, географию и активность по часам.
+// Период можно менять через select (7 / 30 / 90 дней).
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -53,11 +57,14 @@ export default function AnalyticsPage() {
       : 0
     : 0
 
+  // Количество дней с хотя бы одним посещением в выбранном периоде
   const activeDays = stats?.byDay.length ?? 0
 
+  // Берём последние 20 дней для отображения в баровом графике
   const last20Days = stats ? [...stats.byDay].slice(-20) : []
   const maxDay = last20Days.reduce((m, d) => Math.max(m, d.cnt), 0)
 
+  // Заполняем все 24 часа — для часов без данных cnt=0, чтобы график был непрерывным
   const allHours = Array.from({ length: 24 }, (_, h) => {
     const found = stats?.byHour.find(x => x.hour === h)
     return { hour: h, cnt: found?.cnt ?? 0 }
