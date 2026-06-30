@@ -4,6 +4,9 @@
 import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 
+// force-dynamic — отключает кэш Next.js, чтобы новые баннеры появлялись сразу
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     // findFirst вместо findUnique — потому что фильтр содержит не-уникальное поле active
